@@ -87,29 +87,6 @@ const DesignConfigurator = ({
     setImages([...images, imageUrl])
   }
 
-  const handleUploadSticker = async (files: FileList) => {
-    if (files) {
-      const filesArray = Array.from(files)
-      const imageURLs = await Promise.all(
-        filesArray.map(async (file) => {
-          const uploadResponse = await startUpload([file], { configId })
-          return uploadResponse?.[0]?.url ?? ''
-        })
-      )
-      setImages((prev) => [...prev, ...imageURLs.filter((url) => url)])
-    }
-  }
-
-  {
-    images.map((imageUrl, index) => (
-      <Rnd key={index} default={{ x: 0, y: 0, width: 100, height: 100 }}>
-        <img src={imageUrl} alt='Sticker' />
-      </Rnd>
-    ))
-  }
-
-  //bates sticker
-
   const [options, setOptions] = useState<{
     color: (typeof COLORS)[number]
     model: (typeof MODELS.options)[number]
@@ -146,6 +123,47 @@ const DesignConfigurator = ({
   const containerRef = useRef<HTMLDivElement>(null)
 
   const { startUpload } = useUploadThing('imageUploader')
+
+  const [stickers, setStickers] = useState<
+    { image: string; x: number; y: number; width: number; height: number }[]
+  >([])
+
+  const handleAddSticker = (imageUrl: string) => {
+    setStickers((prev) => [
+      ...prev,
+      { image: imageUrl, x: 100, y: 100, width: 100, height: 100 }, // Initial position and size
+    ])
+  }
+
+  const [selectedStickerIndex, setSelectedStickerIndex] = useState<
+    number | null
+  >(null)
+
+  const handleDeleteSticker = () => {
+    if (selectedStickerIndex !== null) {
+      setStickers((prev) =>
+        prev.filter((_, idx) => idx !== selectedStickerIndex)
+      )
+      setSelectedStickerIndex(null) // Clear selection after deletion
+    }
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Backspace') {
+        if (selectedTextIndex !== null) {
+          handleDeleteText()
+        } else if (selectedStickerIndex !== null) {
+          handleDeleteSticker()
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleDeleteSticker, selectedStickerIndex])
 
   async function saveConfiguration() {
     try {
@@ -185,6 +203,28 @@ const DesignConfigurator = ({
       )
 
       // Draw the custom texts
+      texts.forEach((item) => {
+        ctx!.font = `${item.fontSize}px ${item.font}`
+        ctx!.fillStyle = item.textColor
+        ctx!.fillText(item.text, item.x - leftOffset, item.y - topOffset)
+      })
+
+      // Draw stickers on top of the main image
+      for (const sticker of stickers) {
+        const stickerImage = new Image()
+        stickerImage.src = sticker.image
+        await new Promise((resolve) => (stickerImage.onload = resolve))
+
+        ctx!.drawImage(
+          stickerImage,
+          sticker.x - leftOffset,
+          sticker.y - topOffset,
+          sticker.width,
+          sticker.height
+        )
+      }
+
+      // Draw texts on top of stickers (if applicable)
       texts.forEach((item) => {
         ctx!.font = `${item.fontSize}px ${item.font}`
         ctx!.fillStyle = item.textColor
@@ -383,6 +423,48 @@ const DesignConfigurator = ({
         ))}
       </div>
 
+      {/* Render stickers */}
+      {stickers.map((item, index) => (
+    <Rnd
+        key={index}
+        default={{
+            x: item.x,
+            y: item.y,
+            width: item.width,
+            height: item.height,
+        }}
+        onDragStop={(e, d) => {
+            setStickers((prev) =>
+                prev.map((sticker, idx) =>
+                    idx === index ? { ...sticker, x: d.x, y: d.y } : sticker
+                )
+            );
+        }}
+        onResizeStop={(e, direction, ref, delta, position) => {
+            setStickers((prev) =>
+                prev.map((sticker, idx) =>
+                    idx === index
+                        ? {
+                            ...sticker,
+                            width: ref.offsetWidth,
+                            height: ref.offsetHeight,
+                            ...position,
+                        }
+                        : sticker
+                )
+            );
+        }}
+        onClick={() => setSelectedStickerIndex(index)} // Set selected sticker index on click
+        className="absolute z-20" // Ensure the sticker has a high z-index
+    >
+        <img
+            src={item.image}
+            alt='sticker'
+            style={{ width: '100%', height: '100%' }}
+        />
+    </Rnd>
+))}
+
       <div className='h-[37.5rem] w-full  col-span-full lg:col-span-1 flex flex-col bg-white'>
         <ScrollArea className='relative flex-1 overflow-auto'>
           <div
@@ -415,19 +497,20 @@ const DesignConfigurator = ({
               Tambah Text
             </button>
 
-            {/* Upload Sticker */}
-            {/* <input
+            <input
               type='file'
               accept='image/*'
-              multiple
               onChange={(e) => {
-                const files = e.target.files
-                if (files) {
-                  handleUploadSticker(files) // Call only if files exist
+                if (e.target.files && e.target.files[0]) {
+                  const reader = new FileReader()
+                  reader.onload = () => {
+                    handleAddSticker(reader.result as string)
+                  }
+                  reader.readAsDataURL(e.target.files[0])
                 }
               }}
               className='border border-gray-300 rounded px-2 py-1 mb-4 w-full'
-            /> */}
+            />
 
             <div className='relative gap-3 h-full flex flex-col justify-between'>
               {/* Text Color Selection */}
@@ -630,8 +713,9 @@ const DesignConfigurator = ({
             <div className='w-full flex gap-6 items-center'>
               <p className='font-medium whitespace-nowrap'>
                 {formatPrice(
-                  (BASE_PRICE + options.finish.price + options.material.price) / 100
-                )  }
+                  (BASE_PRICE + options.finish.price + options.material.price) /
+                    100
+                )}
               </p>
 
               <Button

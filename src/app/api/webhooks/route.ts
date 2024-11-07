@@ -46,7 +46,7 @@ export async function POST(req: Request) {
         },
         data: {
           isPaid: true,
-          ShippingAddress: {
+          shippingAddress: {  // Changed from 'ShippingAddress' to 'shippingAddress'
             create: {
               name: session.customer_details!.name!,
               city: shippingAddress!.city!,
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
               state: shippingAddress!.state,
             },
           },
-          BillingAddress: {
+          billingAddress: {
             create: {
               name: session.customer_details!.name!,
               city: billingAddress!.city!,
