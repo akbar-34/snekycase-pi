@@ -67,7 +67,7 @@ const DesignConfigurator = ({
   const { mutate: saveConfig } = useMutation({
     mutationKey: ['save-config'],
     mutationFn: async (args: SaveConfigArgs) => {
-      await Promise.all([saveConfiguration(), _saveConfig(args)])
+      await Promise.all([saveConfiguration(imageUrl), _saveConfig(args)])
     },
     onError: () => {
       toast({
@@ -128,11 +128,12 @@ const DesignConfigurator = ({
     { image: string; x: number; y: number; width: number; height: number }[]
   >([])
 
-  const handleAddSticker = (imageUrl: string) => {
+  const handleAddSticker = (imageUrl: string, stickerImageUrl: string) => {
     setStickers((prev) => [
       ...prev,
-      { image: imageUrl, x: 100, y: 100, width: 100, height: 100 }, // Initial position and size
+      {  image: stickerImageUrl, x: 100, y: 100, width: 100, height: 100 }, // Initial position and size
     ])
+    saveConfiguration(imageUrl)
   }
 
   const [selectedStickerIndex, setSelectedStickerIndex] = useState<
@@ -165,7 +166,7 @@ const DesignConfigurator = ({
     }
   }, [handleDeleteSticker, selectedStickerIndex])
 
-  async function saveConfiguration() {
+  async function saveConfiguration(imageUrl: string) {
     try {
       const {
         left: caseLeft,
@@ -275,7 +276,11 @@ const DesignConfigurator = ({
   )
 
   // Track selected text index
-  const handleAddText = () => {
+  const handleAddText = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const imageUrl = event.currentTarget.getAttribute('data-image-url') || '';
+    const text = event.currentTarget.getAttribute('data-text') || '';
+
+
     if (options.text) {
       // Add new text with initial position
       setTexts((prev) => [
@@ -292,6 +297,7 @@ const DesignConfigurator = ({
       // Clear the input field after adding text
       setOptions((prev) => ({ ...prev, text: '' }))
     }
+    saveConfiguration(imageUrl)
   }
 
   // Function to handle deletion of selected text
@@ -504,7 +510,7 @@ const DesignConfigurator = ({
                 if (e.target.files && e.target.files[0]) {
                   const reader = new FileReader()
                   reader.onload = () => {
-                    handleAddSticker(reader.result as string)
+                    handleAddSticker(imageUrl, reader.result as string)
                   }
                   reader.readAsDataURL(e.target.files[0])
                 }
