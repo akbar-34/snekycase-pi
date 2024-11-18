@@ -3,12 +3,12 @@ import { stripe } from '@/lib/stripe';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { Resend } from 'resend';
-import OrderReceivedEmail from '@/components/emails/OrderReceivedEmail';
+// import { Resend } from 'resend';
+// import OrderReceivedEmail from '@/components/emails/OrderReceivedEmail';
 
 // cek
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// const resend = new Resend(process.env.RESEND_API_KEY);
 
 interface ExtendedSession extends Stripe.Checkout.Session {
   shipping?: {
@@ -78,24 +78,23 @@ export async function POST(req: Request) {
         }
       });
 
-      await resend.emails.send({
-        from: 'CaseCobra <onboarding@resend.dev>',
-        to: [event.data.object.customer_details.email],
-        subject: 'Thanks for your order!',
-        react: OrderReceivedEmail({
-          orderId,
-          orderDate: updatedOrder.createdAt.toLocaleDateString(),
-          // @@ts-expect-error
-          shippingAddress: {
-            name: session.customer_details!.name!,
-            city: shippingAddress!.city!,
-            country: shippingAddress!.country!,
-            postalCode: shippingAddress!.postal_code!,
-            street: shippingAddress!.line1!,
-            state: shippingAddress!.state
-          }
-        })
-      });
+      // await resend.emails.send({
+      //   from: 'CaseCobra <onboarding@resend.dev>',
+      //   to: [event.data.object.customer_details.email],
+      //   subject: 'Thanks for your order!',
+      //   react: OrderReceivedEmail({
+      //     orderId,
+      //     orderDate: updatedOrder.createdAt.toLocaleDateString(),
+      //     shippingAddress: {
+      //       name: session.customer_details!.name!,
+      //       city: shippingAddress!.city!,
+      //       country: shippingAddress!.country!,
+      //       postalCode: shippingAddress!.postal_code!,
+      //       street: shippingAddress!.line1!,
+      //       state: shippingAddress!.state
+      //     }
+      //   })
+      // });
     }
 
     return NextResponse.json({ result: event, ok: true });
