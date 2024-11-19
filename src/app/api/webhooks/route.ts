@@ -15,6 +15,7 @@ interface ExtendedSession extends Stripe.Checkout.Session {
     address: Stripe.Address;
   };
 }
+
 export async function POST(req: Request) {
   try {
     const body = await req.text();
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
       }
 
       const billingAddress = session.customer_details!.address;
-      const shippingAddress = session.shipping!.address;
+      const shippingAddress = session.shipping_details!.address;
 
       const updatedOrder = await db.order.update({
         where: {
