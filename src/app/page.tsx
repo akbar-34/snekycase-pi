@@ -21,7 +21,7 @@ export default function Home() {
           <div className="col-span-2 px-6 lg:px-0 lg:pt-4">
             <div className="relative mx-auto text-center lg:text-left flex flex-col items-center lg:items-start">
               <div className="absolute w-28 left-0 -top-20 hidden lg:block">
-                <Image src="/snake-1.PNG" className="w-full" alt={"ular pink"} />
+                <Image src="/snake-1.PNG" className="" alt={"ular pink"} width={150} height={100}/>
               </div>
               <h1 className="relative w-fit tracking-tight text-balance mt-16 font-bold !leading-tight text-gray-900 text-5xl md:text-6xl lg:text-7xl">
                 Desain casing unikmu di{" "}
@@ -134,7 +134,7 @@ export default function Home() {
               </span>{" "}
               bilang
             </h2>
-            <Image src="/snake-2.PNG" className="w-24 order-0 lg:order-2" alt={"ular pink"} />
+            <Image src="/snake-2.PNG" className="w-24 order-0 lg:order-2" alt={"ular pink"} width={150} height={100}/>
           </div>
           <div
             className="mx-auto grid max-w-2xl grid-cols-1 px4 lg:mx-0 

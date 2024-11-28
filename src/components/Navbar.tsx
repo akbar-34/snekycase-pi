@@ -39,7 +39,7 @@ const Navbar = async () => {
                       size: 'sm',
                       variant: 'ghost',
                     })}>
-                    Dashboard
+                    Dashboard 📈
                   </Link>
                 ) : null}
                 <Link

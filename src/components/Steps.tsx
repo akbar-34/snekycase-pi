@@ -67,6 +67,8 @@ const Steps = () => {
                       }
                     )}
                     alt={''}
+                    width={150}
+                    height={100}
                   />
                 </span>
                 <span className='ml-4 h-full mt-0.5 flex min-w-0 flex-col justify-center'>

@@ -64,7 +64,7 @@ const DesignConfigurator = ({
 
   // Inside DesignConfigurator component
 
-  const { mutate: saveConfig } = useMutation({
+  const { mutate: saveConfig, isPending } = useMutation({
     mutationKey: ['save-config'],
     mutationFn: async (args: SaveConfigArgs) => {
       await Promise.all([saveConfiguration(imageUrl), _saveConfig(args)])
@@ -131,7 +131,7 @@ const DesignConfigurator = ({
   const handleAddSticker = (imageUrl: string, stickerImageUrl: string) => {
     setStickers((prev) => [
       ...prev,
-      {  image: stickerImageUrl, x: 100, y: 100, width: 100, height: 100 }, // Initial position and size
+      { image: stickerImageUrl, x: 100, y: 100, width: 100, height: 100 }, // Initial position and size
     ])
     saveConfiguration(imageUrl)
   }
@@ -277,9 +277,8 @@ const DesignConfigurator = ({
 
   // Track selected text index
   const handleAddText = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const imageUrl = event.currentTarget.getAttribute('data-image-url') || '';
-    const text = event.currentTarget.getAttribute('data-text') || '';
-
+    const imageUrl = event.currentTarget.getAttribute('data-image-url') || ''
+    const text = event.currentTarget.getAttribute('data-text') || ''
 
     if (options.text) {
       // Add new text with initial position
@@ -431,45 +430,45 @@ const DesignConfigurator = ({
 
       {/* Render stickers */}
       {stickers.map((item, index) => (
-    <Rnd
-        key={index}
-        default={{
+        <Rnd
+          key={index}
+          default={{
             x: item.x,
             y: item.y,
             width: item.width,
             height: item.height,
-        }}
-        onDragStop={(e, d) => {
+          }}
+          onDragStop={(e, d) => {
             setStickers((prev) =>
-                prev.map((sticker, idx) =>
-                    idx === index ? { ...sticker, x: d.x, y: d.y } : sticker
-                )
-            );
-        }}
-        onResizeStop={(e, direction, ref, delta, position) => {
+              prev.map((sticker, idx) =>
+                idx === index ? { ...sticker, x: d.x, y: d.y } : sticker
+              )
+            )
+          }}
+          onResizeStop={(e, direction, ref, delta, position) => {
             setStickers((prev) =>
-                prev.map((sticker, idx) =>
-                    idx === index
-                        ? {
-                            ...sticker,
-                            width: ref.offsetWidth,
-                            height: ref.offsetHeight,
-                            ...position,
-                        }
-                        : sticker
-                )
-            );
-        }}
-        onClick={() => setSelectedStickerIndex(index)} // Set selected sticker index on click
-        className="absolute z-20" // Ensure the sticker has a high z-index
-    >
-        <img
+              prev.map((sticker, idx) =>
+                idx === index
+                  ? {
+                      ...sticker,
+                      width: ref.offsetWidth,
+                      height: ref.offsetHeight,
+                      ...position,
+                    }
+                  : sticker
+              )
+            )
+          }}
+          onClick={() => setSelectedStickerIndex(index)} // Set selected sticker index on click
+          className='absolute z-20' // Ensure the sticker has a high z-index
+        >
+          <img
             src={item.image}
             alt='sticker'
             style={{ width: '100%', height: '100%' }}
-        />
-    </Rnd>
-))}
+          />
+        </Rnd>
+      ))}
 
       <div className='h-[37.5rem] w-full  col-span-full lg:col-span-1 flex flex-col bg-white'>
         <ScrollArea className='relative flex-1 overflow-auto'>
@@ -725,6 +724,9 @@ const DesignConfigurator = ({
               </p>
 
               <Button
+                isLoading={isPending}
+                disabled={isPending}
+                loadingText='Saving'
                 onClick={() =>
                   saveConfig({
                     configId,
