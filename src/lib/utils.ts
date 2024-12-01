@@ -42,6 +42,6 @@ export function constructMetadata({
       creator: 'akbarananda13',
     },
     icons,
-    metadataBase: new URL('https://snekycase-pi.vercel.app/'),
+    metadataBase: new URL('https://snekycase-pi.vercel.app'),
   }
 }
