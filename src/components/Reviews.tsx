@@ -103,7 +103,7 @@ function Review({ imgSrc, className, ...props }: ReviewProps) {
       )}
       style={{ animationDelay }}
       {...props}>
-      <Phone imgSrc={imgSrc} />
+      <Phone imgSrc={imgSrc} model={''} />
     </div>
   )
 }
