@@ -18,10 +18,6 @@ export const MODELS = {
   name: 'models',
   options: [
     {
-      label: 'iPhone X',
-      value: 'iphonex',
-    },
-    {
       label: 'iPhone 11',
       value: 'iphone11',
     },
@@ -51,7 +47,7 @@ export const MODELS = {
 export const FONTS = [
   { label: 'Arial', value: 'Arial' },
   { label: 'Verdana', value: 'Verdana' },
-  { label: 'Helvetica', value: 'Helvetica,' },
+  { label: 'Helvetica', value: 'Helvetica' },
   { label: 'Times New Roman', value: 'Times New Roman' },
   { label: 'Courier New', value: 'Courier New' },
   { label: 'Georgia', value: 'Georgia' },

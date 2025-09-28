@@ -108,7 +108,7 @@ export default function Home() {
                 className="absolute w-20 -left-6 bottom-6 select-none"
                 src="/line.png"
               />
-              <Phone imgSrc="/testimonials/1.jpg" className="w-64" />
+              <Phone imgSrc="/testimonials/1.jpg" className="w-64" model={""} />
             </div>
           </div>
         </MaxWidthWrapper>
@@ -241,7 +241,7 @@ export default function Home() {
                 />
               </div>
 
-              <Phone className="w-60" imgSrc="/horse_phone.jpg" />
+              <Phone className="w-60" imgSrc="/horse_phone.jpg" model={""} />
             </div>
           </div>
 

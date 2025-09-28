@@ -84,6 +84,7 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
           <Phone
             className={cn(`bg-${tw}`, 'max-w-[150px] md:max-w-full')}
             imgSrc={configuration.croppedImageUrl!}
+            model={model || 'iphone11'}
           />
         </div>
 

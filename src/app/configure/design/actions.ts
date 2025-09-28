@@ -9,6 +9,7 @@ export type SaveConfigArgs = {
   model: PhoneModel
   finish: CaseFinish
   material: CaseMaterial
+  imageUrl: string
 }
 
 export async function saveConfig({
