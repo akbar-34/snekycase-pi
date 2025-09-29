@@ -383,6 +383,7 @@ const DesignConfigurator = ({
             fill
             alt="gambar mu"
             className="pointer-events-none"
+            unoptimized
           />
         </Rnd>
 
